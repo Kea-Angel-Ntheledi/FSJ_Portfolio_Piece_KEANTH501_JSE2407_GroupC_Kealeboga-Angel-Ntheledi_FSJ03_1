@@ -1,26 +1,26 @@
-'use client';
-
-import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useState } from 'react';
 
 export default function ProductCard({ product }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const nextImage = () => {
+  const nextImage = (e) => {
+    e.preventDefault();
     setCurrentImageIndex((prevIndex) => 
       (prevIndex + 1) % product.images.length
     );
   };
 
-  const prevImage = () => {
+  const prevImage = (e) => {
+    e.preventDefault();
     setCurrentImageIndex((prevIndex) => 
       (prevIndex - 1 + product.images.length) % product.images.length
     );
   };
 
   return (
-    <div className="border rounded-lg overflow-hidden shadow-lg">
+    <Link href={`/products/${product.id}`} className="border rounded-lg overflow-hidden shadow-lg block">
       <div className="relative h-48">
         <Image
           src={product.images[currentImageIndex]}
@@ -42,11 +42,12 @@ export default function ProductCard({ product }) {
       <div className="p-4">
         <h2 className="text-lg font-semibold mb-2">{product.title}</h2>
         <p className="text-gray-600 mb-2">${product.price.toFixed(2)}</p>
-        <p className="text-sm text-gray-500 mb-4">{product.category}</p>
-        <Link href={`/products/${product.id}`} className="text-blue-500 hover:underline">
-          View Details
-        </Link>
+        <p className="text-sm text-gray-500 mb-2">{product.category}</p>
+        <div className="flex items-center">
+          <span className="text-yellow-400 mr-1">★</span>
+          <span>{product.rating.toFixed(1)}</span>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }
