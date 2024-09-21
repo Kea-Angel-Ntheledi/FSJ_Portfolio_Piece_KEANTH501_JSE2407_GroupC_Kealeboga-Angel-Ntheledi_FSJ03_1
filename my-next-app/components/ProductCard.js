@@ -1,41 +1,77 @@
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
 
 export default function ProductCard({ product }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [imageLoading, setImageLoading] = useState(true);
+
+  useEffect(() => {
+    console.log('ProductCard rendered for product:', product.id);
+    console.log('Number of images:', product.images.length);
+  }, [product]);
 
   const nextImage = (e) => {
     e.preventDefault();
-    setCurrentImageIndex((prevIndex) => 
-      (prevIndex + 1) % product.images.length
-    );
+    e.stopPropagation();
+    setImageLoading(true);
+    setCurrentImageIndex((prevIndex) => {
+      const newIndex = (prevIndex + 1) % product.images.length;
+      console.log('Next image clicked. New index:', newIndex);
+      return newIndex;
+    });
   };
 
   const prevImage = (e) => {
     e.preventDefault();
-    setCurrentImageIndex((prevIndex) => 
-      (prevIndex - 1 + product.images.length) % product.images.length
-    );
+    e.stopPropagation();
+    setImageLoading(true);
+    setCurrentImageIndex((prevIndex) => {
+      const newIndex = (prevIndex - 1 + product.images.length) % product.images.length;
+      console.log('Previous image clicked. New index:', newIndex);
+      return newIndex;
+    });
   };
 
   return (
     <Link href={`/products/${product.id}`} className="border rounded-lg overflow-hidden shadow-lg block">
-      <div className="relative h-48">
+      <div className="relative h-64">
+        {imageLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
         <Image
           src={product.images[currentImageIndex]}
           alt={product.title}
           layout="fill"
           objectFit="cover"
+          onLoadingComplete={() => setImageLoading(false)}
         />
         {product.images.length > 1 && (
           <>
-            <button onClick={prevImage} className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-1">
+            <button 
+              onClick={prevImage} 
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+            >
               &#8249;
             </button>
-            <button onClick={nextImage} className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-1">
+            <button 
+              onClick={nextImage} 
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+            >
               &#8250;
             </button>
+            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2">
+              {product.images.map((_, index) => (
+                <div 
+                  key={index}
+                  className={`w-2 h-2 rounded-full ${
+                    index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                  }`}
+                />
+              ))}
+            </div>
           </>
         )}
       </div>
