@@ -1,19 +1,26 @@
+'use client';
+
 import React from 'react';
-import { useRouter } from 'next/router';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 export default function SearchFilterSort({ categories, onReset }) {
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const { query } = router;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const newQuery = { ...query, [name]: value, page: 1 };
-    if (!value) delete newQuery[name];
-    router.push({ pathname: router.pathname, query: newQuery });
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set(name, value);
+    } else {
+      params.delete(name);
+    }
+    params.delete('page'); // Reset to first page when filters change
+    router.push('?' + params.toString());
   };
 
   const handleReset = () => {
-    router.push(router.pathname);
+    router.push('/');
     if (onReset) onReset();
   };
 
@@ -23,13 +30,13 @@ export default function SearchFilterSort({ categories, onReset }) {
         type="text"
         name="search"
         placeholder="Search products..."
-        value={query.search || ''}
+        value={searchParams.get('search') || ''}
         onChange={handleChange}
         className="w-full p-2 mb-2 border rounded"
       />
       <select
         name="category"
-        value={query.category || ''}
+        value={searchParams.get('category') || ''}
         onChange={handleChange}
         className="w-full p-2 mb-2 border rounded"
       >
@@ -42,7 +49,7 @@ export default function SearchFilterSort({ categories, onReset }) {
       </select>
       <select
         name="sort"
-        value={query.sort || ''}
+        value={searchParams.get('sort') || ''}
         onChange={handleChange}
         className="w-full p-2 mb-2 border rounded"
       >
