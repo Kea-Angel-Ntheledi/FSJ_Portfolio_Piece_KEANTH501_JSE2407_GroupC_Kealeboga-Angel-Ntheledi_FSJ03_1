@@ -83,6 +83,16 @@ export default function ProductCard({ product }) {
           <span className="text-yellow-400 mr-1">★</span>
           <span>{product.rating.toFixed(1)}</span>
         </div>
+        <div className="mt-2">
+          <Image
+            src={product.images[currentImageIndex]}
+            alt={product.title}
+            width={50}
+            height={50}
+            objectFit="cover"
+            className="rounded-md"
+          />
+        </div>
       </div>
     </Link>
   );
