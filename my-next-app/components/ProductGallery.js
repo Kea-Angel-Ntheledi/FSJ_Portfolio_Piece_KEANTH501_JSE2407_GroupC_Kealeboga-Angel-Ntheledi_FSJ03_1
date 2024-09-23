@@ -11,14 +11,14 @@ export default function ProductGallery({ images }) {
   }
 
   return (
-    <div>
-      <div className="aspect-w-1 aspect-h-1 w-full mb-4">
+    <div className="flex flex-col space-y-4">
+      <div className="relative aspect-square w-full overflow-hidden rounded-lg">
         <Image
           src={images[currentImageIndex]}
           alt={`Product image ${currentImageIndex + 1}`}
           layout="fill"
           objectFit="cover"
-          className="rounded-lg"
+          className="transition-all duration-300 ease-in-out"
         />
       </div>
       {images.length > 1 && (
@@ -27,7 +27,7 @@ export default function ProductGallery({ images }) {
             <button
               key={index}
               onClick={() => setCurrentImageIndex(index)}
-              className={`flex-shrink-0 w-20 h-20 relative ${
+              className={`flex-shrink-0 relative w-20 h-20 rounded-md overflow-hidden ${
                 index === currentImageIndex ? 'ring-2 ring-blue-500' : ''
               }`}
             >
@@ -36,7 +36,6 @@ export default function ProductGallery({ images }) {
                 alt={`Product thumbnail ${index + 1}`}
                 layout="fill"
                 objectFit="cover"
-                className="rounded-md"
               />
             </button>
           ))}
