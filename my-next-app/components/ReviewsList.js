@@ -44,7 +44,7 @@ export default function ReviewsList({ reviews: initialReviews }) {
       {reviews.map((review, index) => (
         <div key={index} className="border-b pb-4 mb-4 last:border-b-0">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold">{review.user}</h3>
+            <h3 className="font-semibold">{review.name}</h3> {/* Display reviewer's name */}
             <span className="text-sm text-gray-500">{new Date(review.date).toLocaleDateString()}</span>
           </div>
           <div className="flex items-center mb-2">
