@@ -15,30 +15,22 @@ export default function ProductCard({ product }) {
     e.preventDefault();
     e.stopPropagation();
     setImageLoading(true);
-    setCurrentImageIndex((prevIndex) => {
-      const newIndex = (prevIndex + 1) % product.images.length;
-      console.log('Next image clicked. New index:', newIndex);
-      return newIndex;
-    });
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % product.images.length);
   };
 
   const prevImage = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setImageLoading(true);
-    setCurrentImageIndex((prevIndex) => {
-      const newIndex = (prevIndex - 1 + product.images.length) % product.images.length;
-      console.log('Previous image clicked. New index:', newIndex);
-      return newIndex;
-    });
+    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + product.images.length) % product.images.length);
   };
 
   return (
-    <Link href={`/products/${product.id}`} className="border rounded-lg overflow-hidden shadow-lg block">
-      <div className="relative h-64">
+    <div className="border rounded-lg overflow-hidden shadow-md block w-full transition-transform hover:scale-105">
+      <div className="relative h-48">
         {imageLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
-            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-6 h-6 border-3 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
         <Image
@@ -52,21 +44,21 @@ export default function ProductCard({ product }) {
           <>
             <button 
               onClick={prevImage} 
-              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+              className="absolute left-1 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-6 h-6 flex items-center justify-center transition-colors text-xs"
             >
               &#8249;
             </button>
             <button 
               onClick={nextImage} 
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+              className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-6 h-6 flex items-center justify-center transition-colors text-xs"
             >
               &#8250;
             </button>
-            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2">
+            <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 flex space-x-1">
               {product.images.map((_, index) => (
                 <div 
                   key={index}
-                  className={`w-2 h-2 rounded-full ${
+                  className={`w-1.5 h-1.5 rounded-full ${
                     index === currentImageIndex ? 'bg-white' : 'bg-white/50'
                   }`}
                 />
@@ -75,25 +67,21 @@ export default function ProductCard({ product }) {
           </>
         )}
       </div>
-      <div className="p-4">
-        <h2 className="text-lg font-semibold mb-2">{product.title}</h2>
-        <p className="text-gray-600 mb-2">${product.price.toFixed(2)}</p>
-        <p className="text-sm text-gray-500 mb-2">{product.category}</p>
-        <div className="flex items-center">
+      <div className="p-3">
+        <h2 className="text-sm font-semibold mb-1 truncate">{product.title}</h2>
+        <p className="text-gray-600 text-sm mb-1">${product.price.toFixed(2)}</p>
+        <p className="text-xs text-gray-500 mb-1 truncate">{product.category}</p>
+        <div className="flex items-center text-xs mb-2">
           <span className="text-yellow-400 mr-1">★</span>
           <span>{product.rating.toFixed(1)}</span>
         </div>
-        <div className="mt-2">
-          <Image
-            src={product.images[currentImageIndex]}
-            alt={product.title}
-            width={50}
-            height={50}
-            objectFit="cover"
-            className="rounded-md"
-          />
-        </div>
+        <Link 
+          href={`/products/${product.id}`}
+          className="block w-full text-center bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-2 px-4 rounded transition-colors"
+        >
+          View Details
+        </Link>
       </div>
-    </Link>
+    </div>
   );
 }
