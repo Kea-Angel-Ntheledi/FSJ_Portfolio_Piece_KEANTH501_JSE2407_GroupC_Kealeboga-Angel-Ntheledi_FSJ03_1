@@ -11,6 +11,7 @@ export default function SearchFilterSort({ categories, onReset }) {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSort, setSelectedSort] = useState('');
 
+  // Restore filters from searchParams on component load
   useEffect(() => {
     const search = searchParams.get('search') || '';
     const category = searchParams.get('category') || '';
@@ -21,16 +22,7 @@ export default function SearchFilterSort({ categories, onReset }) {
     setSelectedSort(sort);
   }, [searchParams]);
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      applyFilters();
-    }
-  };
-
+  // Apply the filters and update the URL with the query parameters
   const applyFilters = () => {
     const params = new URLSearchParams();
     if (searchTerm) {
@@ -42,8 +34,17 @@ export default function SearchFilterSort({ categories, onReset }) {
     if (selectedSort) {
       params.set('sort', selectedSort);
     }
-    params.delete('page'); // Reset to first page when filters change
-    router.push('?' + params.toString());
+    router.push('?' + params.toString()); // Keep filters in URL
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      applyFilters();
+    }
   };
 
   const handleCategoryChange = (e) => {
@@ -60,9 +61,14 @@ export default function SearchFilterSort({ categories, onReset }) {
     setSearchTerm('');
     setSelectedCategory('');
     setSelectedSort('');
-    clearFilterState();
-    router.push('/'); // or the desired route to clear all filters
+    router.push('/'); // Reset filters by navigating to the base route
     if (onReset) onReset();
+  };
+
+  // Generate link to the product detail page while preserving current filters
+  const getProductDetailLink = (productId) => {
+    const params = new URLSearchParams(searchParams);
+    return `/product/${productId}?${params.toString()}`;
   };
 
   return (
@@ -88,6 +94,7 @@ export default function SearchFilterSort({ categories, onReset }) {
           </button>
         )}
       </div>
+
       <label htmlFor="category" className="block mb-2 font-semibold">Category</label>
       <select
         id="category"
@@ -102,6 +109,7 @@ export default function SearchFilterSort({ categories, onReset }) {
           </option>
         ))}
       </select>
+
       <label htmlFor="sort" className="block mb-2 font-semibold">Sort</label>
       <select
         id="sort"
@@ -113,6 +121,7 @@ export default function SearchFilterSort({ categories, onReset }) {
         <option value="price_asc">Price: Low to High</option>
         <option value="price_desc">Price: High to Low</option>
       </select>
+
       <button
         onClick={handleReset}
         className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
