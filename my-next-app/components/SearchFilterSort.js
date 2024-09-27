@@ -7,7 +7,19 @@ export default function SearchFilterSort({ categories, onReset }) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedSort, setSelectedSort] = useState('');
+
+  useEffect(() => {
+    const search = searchParams.get('search') || '';
+    const category = searchParams.get('category') || '';
+    const sort = searchParams.get('sort') || '';
+
+    setSearchTerm(search);
+    setSelectedCategory(category);
+    setSelectedSort(sort);
+  }, [searchParams]);
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -15,44 +27,41 @@ export default function SearchFilterSort({ categories, onReset }) {
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      const params = new URLSearchParams(searchParams);
-      if (searchTerm) {
-        params.set('search', searchTerm);
-      } else {
-        params.delete('search');
-      }
-      params.delete('page'); // Reset to first page when filters change
-      router.push('?' + params.toString());
+      applyFilters();
     }
+  };
+
+  const applyFilters = () => {
+    const params = new URLSearchParams();
+    if (searchTerm) {
+      params.set('search', searchTerm);
+    }
+    if (selectedCategory) {
+      params.set('category', selectedCategory);
+    }
+    if (selectedSort) {
+      params.set('sort', selectedSort);
+    }
+    params.delete('page'); // Reset to first page when filters change
+    router.push('?' + params.toString());
   };
 
   const handleCategoryChange = (e) => {
-    const { value } = e.target;
-    const params = new URLSearchParams(searchParams);
-    if (value) {
-      params.set('category', value);
-    } else {
-      params.delete('category');
-    }
-    params.delete('page'); // Reset to first page when filters change
-    router.push('?' + params.toString());
+    setSelectedCategory(e.target.value);
+    applyFilters();
   };
 
   const handleSortChange = (e) => {
-    const { value } = e.target;
-    const params = new URLSearchParams(searchParams);
-    if (value) {
-      params.set('sort', value);
-    } else {
-      params.delete('sort');
-    }
-    params.delete('page'); // Reset to first page when filters change
-    router.push('?' + params.toString());
+    setSelectedSort(e.target.value);
+    applyFilters();
   };
 
   const handleReset = () => {
     setSearchTerm('');
-    router.push('/');
+    setSelectedCategory('');
+    setSelectedSort('');
+    clearFilterState();
+    router.push('/'); // or the desired route to clear all filters
     if (onReset) onReset();
   };
 
@@ -82,7 +91,7 @@ export default function SearchFilterSort({ categories, onReset }) {
       <label htmlFor="category" className="block mb-2 font-semibold">Category</label>
       <select
         id="category"
-        value={searchParams.get('category') || ''}
+        value={selectedCategory}
         onChange={handleCategoryChange}
         className="w-full p-2 mb-2 border rounded"
       >
@@ -96,7 +105,7 @@ export default function SearchFilterSort({ categories, onReset }) {
       <label htmlFor="sort" className="block mb-2 font-semibold">Sort</label>
       <select
         id="sort"
-        value={searchParams.get('sort') || ''}
+        value={selectedSort}
         onChange={handleSortChange}
         className="w-full p-2 mb-2 border rounded"
       >
