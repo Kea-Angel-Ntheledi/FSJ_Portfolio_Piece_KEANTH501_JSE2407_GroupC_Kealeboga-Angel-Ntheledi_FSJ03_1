@@ -2,10 +2,26 @@
 
 import { useState } from 'react';
 
+/**
+ * ReviewsList component displays a list of customer reviews and allows sorting by date or rating.
+ *
+ * @param {Object} props - The component props.
+ * @param {Array<Object>} props.reviews - An array of review objects to be displayed.
+ * @param {string} props.reviews[].name - The name of the reviewer.
+ * @param {string} props.reviews[].date - The date of the review in ISO format.
+ * @param {number} props.reviews[].rating - The rating given by the reviewer (0 to 5).
+ * @param {string} props.reviews[].comment - The review comment.
+ * @returns {JSX.Element} The rendered ReviewsList component.
+ */
 export default function ReviewsList({ reviews: initialReviews }) {
   const [reviews, setReviews] = useState(initialReviews);
   const [sortBy, setSortBy] = useState('date');
 
+  /**
+   * Handles sorting of reviews based on the selected type (date or rating).
+   *
+   * @param {string} type - The type to sort by ('date' or 'rating').
+   */
   const handleSort = (type) => {
     setSortBy(type);
     const sortedReviews = [...reviews].sort((a, b) => {
@@ -44,7 +60,7 @@ export default function ReviewsList({ reviews: initialReviews }) {
       {reviews.map((review, index) => (
         <div key={index} className="border-b pb-4 mb-4 last:border-b-0">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold">{review.name}</h3> {/* Display reviewer's name */}
+            <h3 className="font-semibold">{review.name}</h3>
             <span className="text-sm text-gray-500">{new Date(review.date).toLocaleDateString()}</span>
           </div>
           <div className="flex items-center mb-2">

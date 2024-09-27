@@ -7,6 +7,12 @@ import SearchFilterSort from './SearchFilterSort';
 
 const PRODUCTS_PER_PAGE = 20;
 
+/**
+ * ProductsList component fetches and displays a list of products with
+ * search, filter, and pagination functionalities.
+ *
+ * @returns {JSX.Element} The rendered ProductsList component.
+ */
 export default function ProductsList() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,6 +26,10 @@ export default function ProductsList() {
     fetchProducts();
   }, [searchParams]);
 
+  /**
+   * Fetches product categories from the API.
+   * Sets the categories state with the fetched data.
+   */
   async function fetchCategories() {
     try {
       const res = await fetch('https://next-ecommerce-api.vercel.app/categories');
@@ -31,6 +41,10 @@ export default function ProductsList() {
     }
   }
 
+  /**
+   * Fetches products based on search, category, sort, and pagination parameters.
+   * Updates the products state with the fetched data.
+   */
   async function fetchProducts() {
     setLoading(true);
     try {
@@ -60,6 +74,12 @@ export default function ProductsList() {
     }
   }
 
+  /**
+   * Handles page change by updating the search parameters and triggering
+   * a re-fetch of products.
+   *
+   * @param {number} newPage - The new page number to navigate to.
+   */
   const handlePageChange = (newPage) => {
     const params = new URLSearchParams(searchParams);
     params.set('page', newPage.toString());

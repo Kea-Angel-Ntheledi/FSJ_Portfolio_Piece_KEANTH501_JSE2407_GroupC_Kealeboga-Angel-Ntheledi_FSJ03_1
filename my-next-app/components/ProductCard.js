@@ -2,6 +2,20 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
+/**
+ * ProductCard component displays product information and allows
+ * users to navigate through product images.
+ *
+ * @param {Object} props - The component props.
+ * @param {Object} props.product - The product object containing product details.
+ * @param {string} props.product.id - The unique identifier for the product.
+ * @param {string} props.product.title - The title of the product.
+ * @param {Array<string>} props.product.images - An array of image URLs for the product.
+ * @param {number} props.product.price - The price of the product.
+ * @param {string} props.product.category - The category of the product.
+ * @param {number} props.product.rating - The average rating of the product.
+ * @returns {JSX.Element} The rendered ProductCard component.
+ */
 export default function ProductCard({ product }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageLoading, setImageLoading] = useState(true);
@@ -11,6 +25,11 @@ export default function ProductCard({ product }) {
     console.log('Number of images:', product.images.length);
   }, [product]);
 
+  /**
+   * Advances to the next image in the product gallery.
+   *
+   * @param {MouseEvent} e - The event triggered by clicking the next button.
+   */
   const nextImage = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -18,6 +37,11 @@ export default function ProductCard({ product }) {
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % product.images.length);
   };
 
+  /**
+   * Goes back to the previous image in the product gallery.
+   *
+   * @param {MouseEvent} e - The event triggered by clicking the previous button.
+   */
   const prevImage = (e) => {
     e.preventDefault();
     e.stopPropagation();

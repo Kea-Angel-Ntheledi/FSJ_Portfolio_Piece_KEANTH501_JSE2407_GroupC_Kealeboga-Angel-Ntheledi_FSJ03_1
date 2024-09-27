@@ -3,6 +3,14 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 
+/**
+ * ProductGallery component displays a main product image and thumbnails for
+ * navigating through multiple images.
+ *
+ * @param {Object} props - The component props.
+ * @param {Array<string>} props.images - An array of image URLs for the product.
+ * @returns {JSX.Element|null} The rendered ProductGallery component or null if no images are provided.
+ */
 export default function ProductGallery({ images }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 

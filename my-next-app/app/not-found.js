@@ -1,5 +1,10 @@
 import Link from 'next/link';
 
+/**
+ * NotFound component displays a message when a product is not found.
+ *
+ * @returns {JSX.Element} The rendered NotFound component.
+ */
 export default function NotFound() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">

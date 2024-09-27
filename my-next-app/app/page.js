@@ -1,6 +1,13 @@
 import ProductsList from "@/components/ProductList";
 import Head from "next/head";
 
+/**
+ * Home component serves as the main entry point for the application.
+ * It displays the homepage content, including the title, description,
+ * and a list of products available in the store.
+ *
+ * @returns {JSX.Element} The rendered Home component.
+ */
 export default function Home() {
   return (
     <main className="container mx-auto px-4">
@@ -23,4 +30,4 @@ export default function Home() {
 }
 
 // Dynamic Title and Description: The title and description are set to reflect the home page content.
-// Open Graph Tags: Useful for social media sharing to provide context
+// Open Graph Tags: Useful for social media sharing to provide context.

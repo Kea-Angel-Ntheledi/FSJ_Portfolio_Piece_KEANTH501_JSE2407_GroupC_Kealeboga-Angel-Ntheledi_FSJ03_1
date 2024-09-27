@@ -3,6 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
+/**
+ * SearchFilterSort component allows users to search, filter, and sort products.
+ *
+ * @param {Object} props - The component props.
+ * @param {Array<string>} props.categories - An array of category names for filtering products.
+ * @param {function} props.onReset - A callback function that gets called when filters are reset.
+ * @returns {JSX.Element} The rendered SearchFilterSort component.
+ */
 export default function SearchFilterSort({ categories, onReset }) {
   const searchParams = useSearchParams();
   const router = useRouter();

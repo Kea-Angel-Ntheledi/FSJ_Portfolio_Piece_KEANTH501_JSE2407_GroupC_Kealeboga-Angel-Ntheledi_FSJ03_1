@@ -4,6 +4,22 @@ import ProductGallery from './ProductGallery';
 import Image from 'next/image';
 import Head from 'next/head';
 
+/**
+ * ProductDetailPage component displays detailed information about a specific product.
+ *
+ * @param {Object} props - The component props.
+ * @param {Object} props.product - The product object containing details for the specific product.
+ * @param {string} props.product.id - The unique identifier for the product.
+ * @param {string} props.product.title - The title of the product.
+ * @param {Array<string>} props.product.images - An array of image URLs for the product.
+ * @param {number} props.product.price - The price of the product.
+ * @param {string} props.product.category - The category of the product.
+ * @param {number} props.product.rating - The average rating of the product.
+ * @param {string} props.product.description - A detailed description of the product.
+ * @param {Array<string>} props.product.tags - An array of tags associated with the product.
+ * @param {number} props.product.stock - The number of available items in stock.
+ * @returns {JSX.Element} The rendered ProductDetailPage component.
+ */
 export default function ProductDetailPage({ product }) {
   const router = useRouter();
 
@@ -66,6 +82,7 @@ export default function ProductDetailPage({ product }) {
     </div>
   );
 }
+
 
 
 // Dynamic Meta Tags: The title and description meta tags are dynamically set based on the product's details.
