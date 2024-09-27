@@ -66,3 +66,8 @@ export default function ProductDetailPage({ product }) {
     </div>
   );
 }
+
+
+// Dynamic Meta Tags: The title and description meta tags are dynamically set based on the product's details.
+// Open Graph Tags: These help with social media sharing.
+// Twitter Cards: Enhance visibility when shared on Twitter.
