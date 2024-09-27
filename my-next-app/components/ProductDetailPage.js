@@ -2,6 +2,7 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import ProductGallery from './ProductGallery';
 import Image from 'next/image';
+import Head from 'next/head';
 
 export default function ProductDetailPage({ product }) {
   const router = useRouter();
@@ -12,6 +13,19 @@ export default function ProductDetailPage({ product }) {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <Head>
+        <title>{product.title} - Your Store Name</title>
+        <meta name="description" content={product.description} />
+        <meta property="og:title" content={product.title} />
+        <meta property="og:description" content={product.description} />
+        <meta property="og:image" content={product.images[0] ? product.images[0].src : '/placeholder-image.jpg'} />
+        <meta property="og:url" content={`https://yourwebsite.com/products/${product.id}`} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={product.title} />
+        <meta name="twitter:description" content={product.description} />
+        <meta name="twitter:image" content={product.images[0] ? product.images[0].src : '/placeholder-image.jpg'} />
+      </Head>
+
       <button
         onClick={() => router.back()}
         className="mb-4 px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
