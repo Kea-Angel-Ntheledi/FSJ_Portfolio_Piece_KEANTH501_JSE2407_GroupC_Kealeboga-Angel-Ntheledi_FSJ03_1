@@ -3,15 +3,19 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ProductGallery from '../../../components/ProductGallery';
 import ReviewsList from '../../../components/ReviewsList';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../../firebase'; // Make sure this points to your Firebase config
 
+// Fetch product from Firestore
 async function getProduct(id) {
-  const res = await fetch(`https://next-ecommerce-api.vercel.app/products/${id}`);
-  
-  if (!res.ok) {
-    throw new Error('Failed to fetch product');
+  const docRef = doc(db, 'products', id);
+  const docSnap = await getDoc(docRef);
+
+  if (!docSnap.exists()) {
+    throw new Error('Product not found');
   }
- 
-  return res.json();
+
+  return { id: docSnap.id, ...docSnap.data() };
 }
 
 export default async function ProductPage({ params }) {
@@ -38,10 +42,11 @@ export default async function ProductPage({ params }) {
             </p>
           </div>
         </div>
-        <ReviewsList reviews={product.reviews} />
+        <ReviewsList reviews={product.reviews || []} />
       </div>
     );
   } catch (error) {
+    console.error('Error fetching product:', error);
     notFound();
   }
 }
