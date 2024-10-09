@@ -1,6 +1,7 @@
 // firebase.js
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth'; 
 
 // Ensure all required environment variables are correctly set
 const firebaseConfig = {
@@ -24,3 +25,4 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
 
 export { db };
+export const auth = getAuth(app);
