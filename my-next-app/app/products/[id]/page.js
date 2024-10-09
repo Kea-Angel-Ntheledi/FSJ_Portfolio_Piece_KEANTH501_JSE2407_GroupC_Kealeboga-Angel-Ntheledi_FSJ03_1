@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import ProductGallery from '../../../components/ProductGallery';
 import ReviewsList from '../../../components/ReviewsList';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../../firebase'; // Make sure this points to your Firebase config
+import { db } from '../../../pages/api/firebase'
 
 // Fetch product from Firestore
 async function getProduct(id) {
