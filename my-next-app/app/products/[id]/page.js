@@ -16,6 +16,62 @@ export default function ProductDetail() {
   const [dateSortOption, setDateSortOption] = useState("");
   const [ratingSortOption, setRatingSortOption] = useState("");
 
+  // State for new review form
+  const [newReview, setNewReview] = useState({
+    user: "",
+    rating: 0,
+    comment: ""
+  });
+
+  // State for editing review
+  const [editReviewIndex, setEditReviewIndex] = useState(null);
+  const [editReview, setEditReview] = useState({
+    user: "",
+    rating: 0,
+    comment: ""
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewReview({ ...newReview, [name]: value });
+  };
+
+  const handleReviewSubmit = (e) => {
+    e.preventDefault();
+
+    const newReviewWithDate = {
+      ...newReview,
+      date: new Date().toISOString(), // Add current date
+      rating: parseFloat(newReview.rating)
+    };
+
+    // Update the reviews list locally (In a real app, this would also be persisted to a backend like Firebase)
+    setReviews([newReviewWithDate, ...reviews]);
+    setNewReview({ user: "", rating: 0, comment: "" }); // Clear the form after submission
+  };
+
+  const handleEditReviewChange = (e) => {
+    const { name, value } = e.target;
+    setEditReview({ ...editReview, [name]: value });
+  };
+
+  const handleEditReviewSubmit = (e) => {
+    e.preventDefault();
+    const updatedReview = { ...editReview, date: new Date().toISOString() };
+    
+    const updatedReviews = [...reviews];
+    updatedReviews[editReviewIndex] = updatedReview;
+
+    setReviews(updatedReviews);
+    setEditReviewIndex(null);
+    setEditReview({ user: "", rating: 0, comment: "" });
+  };
+
+  const handleDeleteReview = (index) => {
+    const updatedReviews = reviews.filter((_, i) => i !== index);
+    setReviews(updatedReviews);
+  };
+
   useEffect(() => {
     if (!id) return;
 
@@ -71,10 +127,6 @@ export default function ProductDetail() {
     setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
   };
 
-  const updateUrl = (searchQuery, selectedCategory, sortOrder, page) => {
-    router.push(`/products?search=${searchQuery || ''}&category=${selectedCategory || ''}&sortby=${sortOrder}&page=${page}`);
-  };
-
   return (
     <div className="container mx-auto p-4">
       <button
@@ -119,14 +171,14 @@ export default function ProductDetail() {
             <p className="text-sm text-gray-600 mb-2">Category: {product.category}</p>
             <p className="text-sm text-gray-600">Tags: {product.tags.join(", ")}</p>
           </div>
-
-          <div className="h-24 bg-gray-200 mt-4"></div>
         </div>
       </div>
 
+      {/* Reviews Section */}
       <div className="mt-8">
         <h3 className="text-2xl font-semibold mb-4">Reviews</h3>
 
+        {/* Sorting options */}
         <div className="mb-4">
           <label htmlFor="sort-date" className="mr-2">Sort by Date:</label>
           <select
@@ -155,19 +207,132 @@ export default function ProductDetail() {
           </select>
         </div>
 
-        {reviews.length > 0 ? (
-          <div className="space-y-4">
-            {reviews.map((review, index) => (
-              <div key={index} className="border p-4 rounded-md shadow-sm">
-                <p className="text-gray-800 font-semibold">{review.user}</p>
-                <p className="text-sm text-gray-600">{review.comment}</p>
-                <p className="text-sm text-yellow-500">Rating: {review.rating} / 5</p>
-                <p className="text-sm text-gray-400">{new Date(review.date).toLocaleDateString()}</p>
-              </div>
-            ))}
+        {/* Add new review form */}
+        <form onSubmit={handleReviewSubmit} className="mb-8">
+          <h4 className="text-xl font-semibold mb-4">Write a Review</h4>
+          <div className="mb-4">
+            <label htmlFor="user" className="block mb-2">Name:</label>
+            <input
+              type="text"
+              id="user"
+              name="user"
+              value={newReview.user}
+              onChange={handleInputChange}
+              required
+              className="w-full p-2 border border-gray-300 rounded"
+            />
           </div>
+          <div className="mb-4">
+            <label htmlFor="rating" className="block mb-2">Rating (0 to 5):</label>
+            <input
+              type="number"
+              id="rating"
+              name="rating"
+              value={newReview.rating}
+              onChange={handleInputChange}
+              min="0"
+              max="5"
+              step="0.1"
+              required
+              className="w-full p-2 border border-gray-300 rounded"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="comment" className="block mb-2">Comment:</label>
+            <textarea
+              id="comment"
+              name="comment"
+              value={newReview.comment}
+              onChange={handleInputChange}
+              required
+              className="w-full p-2 border border-gray-300 rounded"
+            ></textarea>
+          </div>
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Submit Review
+          </button>
+        </form>
+
+        {/* Display reviews */}
+        {reviews.length === 0 ? (
+          <p>No reviews yet.</p>
         ) : (
-          <p className="text-gray-500">No reviews yet.</p>
+          reviews.map((review, index) => (
+            <div key={index} className="border border-gray-300 p-4 mb-4 rounded">
+              <p className="font-semibold">{review.user} - {new Date(review.date).toLocaleDateString()}</p>
+              <p>Rating: {review.rating} / 5</p>
+              <p>{review.comment}</p>
+              <button
+                onClick={() => {
+                  setEditReviewIndex(index);
+                  setEditReview({ user: review.user, rating: review.rating, comment: review.comment });
+                }}
+                className="text-blue-500 mr-2"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDeleteReview(index)}
+                className="text-red-500"
+              >
+                Delete
+              </button>
+            </div>
+          ))
+        )}
+
+        {/* Edit review form */}
+        {editReviewIndex !== null && (
+          <form onSubmit={handleEditReviewSubmit} className="mb-8">
+            <h4 className="text-xl font-semibold mb-4">Edit Review</h4>
+            <div className="mb-4">
+              <label htmlFor="edit-user" className="block mb-2">Name:</label>
+              <input
+                type="text"
+                id="edit-user"
+                name="user"
+                value={editReview.user}
+                onChange={handleEditReviewChange}
+                required
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="edit-rating" className="block mb-2">Rating (0 to 5):</label>
+              <input
+                type="number"
+                id="edit-rating"
+                name="rating"
+                value={editReview.rating}
+                onChange={handleEditReviewChange}
+                min="0"
+                max="5"
+                step="0.1"
+                required
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="edit-comment" className="block mb-2">Comment:</label>
+              <textarea
+                id="edit-comment"
+                name="comment"
+                value={editReview.comment}
+                onChange={handleEditReviewChange}
+                required
+                className="w-full p-2 border border-gray-300 rounded"
+              ></textarea>
+            </div>
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Update Review
+            </button>
+          </form>
         )}
       </div>
     </div>
