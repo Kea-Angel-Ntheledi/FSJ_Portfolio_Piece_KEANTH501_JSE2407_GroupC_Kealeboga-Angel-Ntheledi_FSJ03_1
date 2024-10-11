@@ -12,7 +12,7 @@ export default function About() {
         <br />
         123 Store Address,
         <br />
-        City, State, ZIP Code.
+        CapeTown, SA, 2459.
       </p>
       <p className="mb-4">
         We are committed to delivering the best shopping experience and are always here to help with any questions or concerns.
