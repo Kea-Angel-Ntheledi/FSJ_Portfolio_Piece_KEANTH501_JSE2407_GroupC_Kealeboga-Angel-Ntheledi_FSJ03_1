@@ -1,80 +1,98 @@
-// pages/auth.js
+"use client";
+
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { auth } from '../pages/api/firebase'; // Ensure this path is correct based on your Firebase setup
-import { signInWithEmailAndPassword } from 'firebase/auth'; // Import the Firebase authentication method
+import { auth } from '../pages/api/firebase';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Auth() {
-  // State to store email, password, and error messages
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const mode = searchParams.get('mode') || 'signin';
 
-  // Check if the user is already authenticated and redirect if so
+  // Redirect to home if user is already signed in
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        router.push('/'); // Redirect to home if user is logged in
+        router.push('/');  // Redirect if already logged in
       }
     });
-
-    return () => unsubscribe(); // Cleanup the listener when the component is unmounted
+    return () => unsubscribe();
   }, [router]);
 
-  // Handle the sign-in process
-  const handleSignIn = async (event) => {
+  const handleAuth = async (event) => {
     event.preventDefault();
-    setError(''); // Clear any existing errors
+    setError('');  // Reset error message
 
     try {
-      // Attempt to sign in with Firebase Authentication using the entered email and password
-      await signInWithEmailAndPassword(auth, email, password);
-      router.push('/'); // Redirect to the home page on successful sign-in
-    } catch (err) {
-      // Display any errors that occur during sign-in
-      if (err.code === 'auth/user-not-found') {
-        setError('No user found with this email.');
-      } else if (err.code === 'auth/wrong-password') {
-        setError('Incorrect password.');
-      } else if (err.code === 'auth/invalid-email') {
-        setError('Invalid email format.');
+      // Authenticate user based on mode (signup or signin)
+      if (mode === 'signup') {
+        await createUserWithEmailAndPassword(auth, email, password);
       } else {
-        setError('Failed to sign in. Please try again.');
+        await signInWithEmailAndPassword(auth, email, password);
       }
+      router.push('/');  // Redirect to home page on success
+    } catch (err) {
+      setError(err.message);  // Show error message if authentication fails
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-3xl font-bold mb-4">Sign In</h1>
-      {/* Display error messages */}
-      {error && <p className="text-red-500 mb-4">{error}</p>}
-      <form onSubmit={handleSignIn} className="flex flex-col space-y-4 w-80">
-        {/* Email Input Field */}
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+      <h1 className="text-4xl font-bold mb-6 text-center">
+        {mode === 'signup' ? 'Sign Up' : 'Sign In'}
+      </h1>
+
+      {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+
+      <form onSubmit={handleAuth} className="flex flex-col space-y-4 w-80">
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
         />
-        {/* Password Input Field */}
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
         />
-        {/* Sign In Button */}
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition"
+          className={`px-4 py-2 text-white rounded-md transition ${
+            mode === 'signup' ? 'bg-green-600 hover:bg-green-500' : 'bg-blue-600 hover:bg-blue-500'
+          }`}
         >
-          Sign In
+          {mode === 'signup' ? 'Create Account' : 'Sign In'}
         </button>
       </form>
+
+      <p className="mt-4 text-center">
+        {mode === 'signup' ? (
+          <>
+            Already have an account?{' '}
+            <Link href="/auth?mode=signin" className="text-blue-600 hover:underline">
+              Sign In
+            </Link>
+          </>
+        ) : (
+          <>
+            Don't have an account?{' '}
+            <Link href="/auth?mode=signup" className="text-blue-600 hover:underline">
+              Sign Up
+            </Link>
+          </>
+        )}
+      </p>
     </div>
   );
 }
